@@ -1,0 +1,10 @@
+/pycache
+.env
+/agent/pycache
+/api/pycache
+/controllers/pycache
+/db/pycache
+/models/pycache
+/routes/pycache
+/services/pycache
+/utils/pycache
