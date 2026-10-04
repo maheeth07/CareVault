@@ -1,5 +1,5 @@
 from controllers.doctor_controller import login_doctor
-from backend.models.doctor import DoctorLogin
+from models.doctor import DoctorLogin
 from controllers.doctor_controller import create_doctor
 from fastapi import APIRouter
 from models.doctor import Doctor

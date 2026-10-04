@@ -1,0 +1,33 @@
+00:00:05 Doctor: Good morning. How are you feeling today?
+
+00:00:12 Patient: Good morning, doctor. I've been having a headache
+for the last three days.
+
+00:00:21 Doctor: Can you describe the headache? Is it constant or
+does it come and go?
+
+00:00:28 Patient: It comes and goes. Mostly in the evening.
+Sometimes I also feel slightly dizzy.
+
+00:00:42 Doctor: Do you have any history of migraines or high blood
+pressure?
+
+00:00:49 Patient: I have had migraines before, but I haven't had
+one in about six months.
+
+00:01:03 Doctor: Are you currently taking any medications?
+
+00:01:08 Patient: I'm taking paracetamol when the headache gets bad.
+
+00:01:15 Doctor: How much are you taking?
+
+00:01:19 Patient: Usually 500 milligrams, once or twice a day.
+
+00:01:30 Doctor: Okay. Have you experienced nausea, vomiting, blurred
+vision, or sensitivity to light?
+
+00:01:37 Patient: I have some sensitivity to light, but no vomiting.
+
+00:01:48 Doctor: Based on what you've described, this may be related
+to your previous migraine condition. I'd like you to monitor
+your symptoms and we'll follow up next week.

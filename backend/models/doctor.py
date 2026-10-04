@@ -3,10 +3,10 @@ class Doctor(BaseModel):
     name:str
     email:str
     password:str
-    phone:int
+    phone:str
     specialization:str
     qualification:str
-    experience:int
+    experience:str
     license_no:str
 
 

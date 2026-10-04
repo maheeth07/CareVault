@@ -1,4 +1,4 @@
-from backend.utils.auth import create_acc_tok
+from utils.auth import create_acc_tok
 from fastapi import HTTPException
 from models.doctor import Doctor
 from db.mng import db
@@ -24,7 +24,7 @@ async def create_doctor(doctor:Doctor):
     return {"message":"Doctor created successfully.","id":str(result.inserted_id)}
 
 async def login_doctor(doctor:DoctorLogin):
-    ext_doc=await db.doctor.find_one({
+    ext_doc=await db.doctors.find_one({
         "email":doctor.email
     })
     if not ext_doc:
@@ -39,8 +39,8 @@ async def login_doctor(doctor:DoctorLogin):
             detail="Invalid email or password"
         )
     token=create_acc_tok({
-        "doctor_id":str(doctor["_id"]),
-        "email":doctor["email"]
+        "doctor_id":str(ext_doc["_id"]),
+        "email":ext_doc["email"]
     })
     return {
         "message":"Login Successfull!",
