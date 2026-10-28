@@ -8,6 +8,7 @@ client=AsyncIOMotorClient(mongo_url)
 db=client.get_database("carevault")
 
 async def create_indexes():
-    await db.doctors.create_index(
-        "email",unique=True
-    )
+    await db.doctors.create_index("email", unique=True)
+    await db.doctors.create_index("name")      
+    await db.patients.create_index("name")     
+    await db.tenures.create_index("title")     

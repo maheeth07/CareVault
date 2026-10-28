@@ -55,3 +55,17 @@ async def login_patient(patient:PatientLogin):
         "access_token":token,
         "token_type":"bearer"   
     }
+
+async def search_patients(name_query: str = ""):
+    filter_query = {}
+    if name_query:
+        filter_query["name"] = {"$regex": name_query, "$options": "i"}
+
+    patients = await db.patients.find(
+        filter_query, 
+        {"password": 0}
+    ).to_list(length=50)
+
+    for pat in patients:
+        pat["_id"] = str(pat["_id"])
+    return patients

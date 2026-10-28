@@ -5,40 +5,19 @@ from bson import ObjectId
 from models.appointment import Appointment
 from db.mng import db
 
-async def create_appointment(appointment:Appointment):
-    ext_pat=await db.patients.find_one({
-        "_id":ObjectId(appointment.patient_id)
-    })
-    if not ext_pat:
-        raise HTTPException(
-            status_code=404,
-            detail="Patient Not Found"
-        )
-    ext_doc=await db.doctors.find_one({
-        "_id":ObjectId(appointment.doctor_id)
-    })
-    if not ext_doc:
-        raise HTTPException(
-            status_code=404,
-            detail="Doctor Not Found"
-        )
-    ext_ten=await db.tenures.find_one({
-            "_id": ObjectId(appointment.tenure_id),
-            "patient_id": appointment.patient_id
-        })
-    if not ext_ten:
-        raise HTTPException(
-            status_code=404,
-            detail="Tenure not found"
-        )
+async def create_appointment(appointment: Appointment):
+    ext_pat = await db.patients.find_one({"_id": ObjectId(appointment.patient_id)})
+    ext_doc = await db.doctors.find_one({"_id": ObjectId(appointment.doctor_id)})
+    ext_ten = await db.tenures.find_one({"_id": ObjectId(appointment.tenure_id)})
+
     appointment_data = appointment.model_dump()
-    result = await db.appointments.insert_one(
-        appointment_data
-    )
-    return {
-        "message": "Appointment requested successfully",
-        "appointment_id": str(result.inserted_id)
-    }
+    # Save names alongside IDs
+    appointment_data["patient_name"] = ext_pat["name"]
+    appointment_data["doctor_name"] = ext_doc["name"]
+    appointment_data["tenure_title"] = ext_ten["title"]
+
+    result = await db.appointments.insert_one(appointment_data)
+    return {"message": "Appointment requested", "appointment_id": str(result.inserted_id)}
 
 
 
@@ -48,6 +27,12 @@ async def get_patient_appointments(patient_id: str):
     }).to_list(length=None)
     for appointment in appointments:
         appointment["_id"] = str(appointment["_id"])
+        if not appointment.get("doctor_name") and ObjectId.is_valid(appointment.get("doctor_id")):
+            doc = await db.doctors.find_one({"_id": ObjectId(appointment["doctor_id"])})
+            appointment["doctor_name"] = doc["name"] if doc else "Doctor"
+        if not appointment.get("tenure_title") and ObjectId.is_valid(appointment.get("tenure_id")):
+            ten = await db.tenures.find_one({"_id": ObjectId(appointment["tenure_id"])})
+            appointment["tenure_title"] = ten["title"] if ten else "Medical Tenure"
     return appointments
 
 
@@ -59,6 +44,12 @@ async def get_doctor_requests(doctor_id: str):
     }).to_list(length=None)
     for appointment in appointments:
         appointment["_id"] = str(appointment["_id"])
+        if not appointment.get("patient_name") and ObjectId.is_valid(appointment.get("patient_id")):
+            pat = await db.patients.find_one({"_id": ObjectId(appointment["patient_id"])})
+            appointment["patient_name"] = pat["name"] if pat else "Patient"
+        if not appointment.get("tenure_title") and ObjectId.is_valid(appointment.get("tenure_id")):
+            ten = await db.tenures.find_one({"_id": ObjectId(appointment["tenure_id"])})
+            appointment["tenure_title"] = ten["title"] if ten else "Medical Tenure"
     return appointments
 
 
@@ -87,6 +78,23 @@ async def accept_appointment(appointment_id:str,appointment_date:date,appointmen
         }
     )
     return {"message":"Appointment accepted and scheduled"}
+
+async def get_doctor_appointments(doctor_id: str):
+    appointments = await db.appointments.find({"doctor_id": doctor_id}).to_list(None)
+
+    for appt in appointments:
+        appt["_id"] = str(appt["_id"])
+        
+        if ObjectId.is_valid(appt.get("patient_id")):
+            patient = await db.patients.find_one({"_id": ObjectId(appt["patient_id"])})
+            appt["patient_name"] = patient["name"] if patient else "Unknown Patient"
+        
+        if ObjectId.is_valid(appt.get("tenure_id")):
+            tenure = await db.tenures.find_one({"_id": ObjectId(appt["tenure_id"])})
+            appt["tenure_title"] = tenure["title"] if tenure else "General Tenure"
+
+    return appointments
+
 
 
 async def reject_appointment(appointment_id:str):

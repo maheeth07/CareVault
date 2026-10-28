@@ -7,12 +7,17 @@ from controllers.appointment_controller import (
     get_doctor_requests,
     accept_appointment,
     reject_appointment,
-    complete_appointment
+    complete_appointment,
+    get_doctor_appointments
 )
 
+# from controllers.appointment_controller import 
 
 router = APIRouter()
 
+@router.get("/doctor/{doctor_id}")
+async def doctor_appointments(doctor_id: str):
+    return await get_doctor_appointments(doctor_id)
 
 @router.post("/appointments/request")
 async def request_appointment_route(

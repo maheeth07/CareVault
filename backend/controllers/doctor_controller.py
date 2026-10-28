@@ -47,3 +47,13 @@ async def login_doctor(doctor:DoctorLogin):
         "access_token":token,
         "token_type":"bearer"   
     }
+
+
+async def search_doctors(name_query:str=""):
+    filter_query={}
+    if name_query:
+        filter_query["name"] = {"$regex": name_query, "$options": "i"}
+    doctors=await db.doctors.find(filter_query,{"password":0}).to_list(10)
+    for doctor in doctors:
+        doctor["_id"]=str(doctor["_id"])
+    return doctors
