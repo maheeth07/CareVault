@@ -262,7 +262,10 @@ export default function DoctorPortal() {
 
   const handleCompleteAppointment = async (apptId: string) => {
     try {
-      await completeAppointment(apptId);
+      const res = await completeAppointment(apptId);
+      if (res?.message) {
+        alert(res.message);
+      }
       fetchAppointments();
     } catch (err: any) {
       alert("Error marking as completed: " + err.message);
@@ -713,6 +716,30 @@ export default function DoctorPortal() {
                           >
                             Mark Completed
                           </button>
+                        )}
+
+                        {appt.status === "completed" && (
+                          <div className="flex items-center gap-2">
+                            {appt.ingestion_status === "completed" ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-green-50 dark:bg-green-950/60 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-md">
+                                <CheckCircle className="w-3.5 h-3.5 text-green-600" /> Transcript Ingested ({appt.chunks_stored || 0} chunks)
+                              </span>
+                            ) : appt.ingestion_status === "google_auth_required" ? (
+                              <a
+                                href={`http://localhost:8000/auth/google/login?doctor_id=${doctorId}&consultation_id=${appt.consultation_id || ""}&meet_url=${encodeURIComponent(appt.meeting_link || "")}`}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 rounded-md hover:bg-amber-100"
+                              >
+                                Connect Google Meet
+                              </a>
+                            ) : (
+                              <button
+                                onClick={() => handleCompleteAppointment(appt._id)}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 rounded-md hover:bg-blue-100"
+                              >
+                                <RefreshCw className="w-3 h-3" /> Sync Transcript
+                              </button>
+                            )}
+                          </div>
                         )}
 
                         <button

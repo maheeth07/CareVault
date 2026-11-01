@@ -9,6 +9,7 @@ from routes.appointment_routes import router as appointment_router
 from routes.consultation_routes import router as consultation_router
 from routes.transcript_routes import router as transcript_router
 from routes.rag_routes import router as rag_router
+from routes.google_meet_routes import router as google_meet_router
 
 load_dotenv()
 
@@ -23,7 +24,7 @@ app.add_middleware(
     ],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 
@@ -31,6 +32,7 @@ app.add_middleware(
 async def startup():
     await create_indexes()
 
+app.include_router(google_meet_router)
 app.include_router(doctor_router)
 app.include_router(patient_router)
 app.include_router(tenure_router)

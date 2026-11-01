@@ -8,6 +8,7 @@ import os
 from dotenv import load_dotenv
 from groq import AsyncGroq
 
+load_dotenv(dotenv_path=backend_dir / ".env")
 load_dotenv()
 
 groq_client = AsyncGroq(
